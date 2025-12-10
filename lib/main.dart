@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rep_logic/screens/home_screen.dart';
 
 void main() {
-  runApp(RepLogicApp());
+  runApp(const ProviderScope(child: RepLogicApp()));
 }
 
 class RepLogicApp extends StatelessWidget {
@@ -13,12 +15,10 @@ class RepLogicApp extends StatelessWidget {
       title: "RepLogic",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const Scaffold(
-        body: Center(child: Text("Replogic Setup Complete")),
-      ),
+      home: HomeScreen(),
     );
   }
 }
