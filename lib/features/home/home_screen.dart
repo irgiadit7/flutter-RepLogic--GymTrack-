@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:rep_logic/features/home/widgets/add_session_sheet.dart';
+import 'package:rep_logic/features/session_detail/session_detail_screen.dart';
 import 'package:uuid/uuid.dart';
-import '../data/providers.dart';
-import '../data/local/database.dart';
+import '../../data/providers.dart';
+import '../../data/local/database.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final database = ref.watch(databaseProvider);
+    final repository = ref.watch(workoutRepositoryProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text("RepLogic")),
       body: StreamBuilder<List<WorkoutSession>>(
-        stream: database.select(database.workoutSessions).watch(),
+        stream: repository.watchAllSessions(),
         builder: (context, snapshot) {
           final sessions = snapshot.data ?? [];
 
@@ -36,6 +38,20 @@ class HomeScreen extends ConsumerWidget {
                 title: Text(session.name),
                 subtitle: Text(session.date.toString()),
                 leading: const Icon(Icons.fitness_center),
+                onTap: () {
+                  // NAVIGASI KE DETAIL
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SessionDetailScreen(
+                        session: session,
+                      ), // Kirim data sesi
+                    ),
+                  );
+                },
+                onLongPress: () {
+                  repository.deleteSession(session.id);
+                },
               );
             },
           );
@@ -43,14 +59,12 @@ class HomeScreen extends ConsumerWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newSession = WorkoutSessionsCompanion(
-            id: drift.Value(const Uuid().v4()),
-            name: const drift.Value("Push Day(Chest)"),
-            date: drift.Value(DateTime.now()),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => const AddSessionSheet(),
           );
-
-          await database.into(database.workoutSessions).insert(newSession);
         },
 
         child: const Icon(Icons.add),
