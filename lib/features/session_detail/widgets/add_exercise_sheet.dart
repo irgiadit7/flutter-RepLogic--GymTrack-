@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/providers.dart';
 
-class AddSessionSheet extends ConsumerStatefulWidget {
-  const AddSessionSheet({super.key});
+class AddExerciseSheet extends ConsumerStatefulWidget {
+  final Function(String name, String target) onSubmit;
+
+  const AddExerciseSheet({super.key, required this.onSubmit});
 
   @override
-  ConsumerState<AddSessionSheet> createState() => _AddSessionSheetState();
+  ConsumerState<AddExerciseSheet> createState() => _AddExerciseSheetState();
 }
 
-class _AddSessionSheetState extends ConsumerState<AddSessionSheet> {
+class _AddExerciseSheetState extends ConsumerState<AddExerciseSheet> {
   final _nameController = TextEditingController();
+  final _targetController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
+    _targetController.dispose();
     super.dispose();
   }
 
   void _submit() {
     final name = _nameController.text.trim();
+    final target = _targetController.text.trim();
+
     if (name.isEmpty) return;
 
-    final repository = ref.read(workoutRepositoryProvider);
-
-    repository.addSession(name, DateTime.now());
+    widget.onSubmit(name, target);
 
     Navigator.of(context).pop();
   }
@@ -40,26 +43,31 @@ class _AddSessionSheetState extends ConsumerState<AddSessionSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            "start a new workout",
+            "Add New Exercise",
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-
           const SizedBox(height: 15),
           TextField(
             controller: _nameController,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: "Session Name (Example: Push Day)",
+              labelText: "Exercise Name (e.g., Bench Press)",
               border: OutlineInputBorder(),
             ),
           ),
-
+          const SizedBox(height: 15),
+          TextField(
+            controller: _targetController,
+            decoration: const InputDecoration(
+              labelText: "Target Muscle (e.g., Chest)",
+              border: OutlineInputBorder(),
+            ),
+          ),
           const SizedBox(height: 20),
-
           FilledButton.icon(
             onPressed: _submit,
-            label: const Text("start training!"),
-            icon: const Icon(Icons.save),
+            icon: const Icon(Icons.add_circle),
+            label: const Text("SAVE EXERCISE"),
           ),
         ],
       ),

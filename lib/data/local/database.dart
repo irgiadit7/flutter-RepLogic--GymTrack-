@@ -19,7 +19,7 @@ class WorkoutSessions extends Table {
 class Exercises extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
-  TextColumn get taegetMusncle => text().nullable()();
+  TextColumn get targetMuscle => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -53,4 +53,14 @@ LazyDatabase _openConnection() {
     final file = File(p.join(dbFolder.path, 'replogic.sqlite'));
     return NativeDatabase.createInBackground(file);
   });
+}
+
+class Exercies extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+
+  TextColumn get targetMuscle => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }

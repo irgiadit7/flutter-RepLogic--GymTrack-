@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' as drift;
 import 'package:rep_logic/features/home/widgets/add_session_sheet.dart';
 import 'package:rep_logic/features/session_detail/session_detail_screen.dart';
-import 'package:uuid/uuid.dart';
 import '../../data/providers.dart';
 import '../../data/local/database.dart';
 
@@ -39,13 +37,12 @@ class HomeScreen extends ConsumerWidget {
                 subtitle: Text(session.date.toString()),
                 leading: const Icon(Icons.fitness_center),
                 onTap: () {
-                  // NAVIGASI KE DETAIL
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SessionDetailScreen(
                         session: session,
-                      ), // Kirim data sesi
+                      ),
                     ),
                   );
                 },

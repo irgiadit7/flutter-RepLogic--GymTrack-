@@ -345,19 +345,19 @@ class $ExercisesTable extends Exercises
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _taegetMusncleMeta = const VerificationMeta(
-    'taegetMusncle',
+  static const VerificationMeta _targetMuscleMeta = const VerificationMeta(
+    'targetMuscle',
   );
   @override
-  late final GeneratedColumn<String> taegetMusncle = GeneratedColumn<String>(
-    'taeget_musncle',
+  late final GeneratedColumn<String> targetMuscle = GeneratedColumn<String>(
+    'target_muscle',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, name, taegetMusncle];
+  List<GeneratedColumn> get $columns => [id, name, targetMuscle];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -383,12 +383,12 @@ class $ExercisesTable extends Exercises
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('taeget_musncle')) {
+    if (data.containsKey('target_muscle')) {
       context.handle(
-        _taegetMusncleMeta,
-        taegetMusncle.isAcceptableOrUnknown(
-          data['taeget_musncle']!,
-          _taegetMusncleMeta,
+        _targetMuscleMeta,
+        targetMuscle.isAcceptableOrUnknown(
+          data['target_muscle']!,
+          _targetMuscleMeta,
         ),
       );
     }
@@ -409,9 +409,9 @@ class $ExercisesTable extends Exercises
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
-      taegetMusncle: attachedDatabase.typeMapping.read(
+      targetMuscle: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}taeget_musncle'],
+        data['${effectivePrefix}target_muscle'],
       ),
     );
   }
@@ -425,15 +425,15 @@ class $ExercisesTable extends Exercises
 class Exercise extends DataClass implements Insertable<Exercise> {
   final String id;
   final String name;
-  final String? taegetMusncle;
-  const Exercise({required this.id, required this.name, this.taegetMusncle});
+  final String? targetMuscle;
+  const Exercise({required this.id, required this.name, this.targetMuscle});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
-    if (!nullToAbsent || taegetMusncle != null) {
-      map['taeget_musncle'] = Variable<String>(taegetMusncle);
+    if (!nullToAbsent || targetMuscle != null) {
+      map['target_muscle'] = Variable<String>(targetMuscle);
     }
     return map;
   }
@@ -442,9 +442,9 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     return ExercisesCompanion(
       id: Value(id),
       name: Value(name),
-      taegetMusncle: taegetMusncle == null && nullToAbsent
+      targetMuscle: targetMuscle == null && nullToAbsent
           ? const Value.absent()
-          : Value(taegetMusncle),
+          : Value(targetMuscle),
     );
   }
 
@@ -456,7 +456,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     return Exercise(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      taegetMusncle: serializer.fromJson<String?>(json['taegetMusncle']),
+      targetMuscle: serializer.fromJson<String?>(json['targetMuscle']),
     );
   }
   @override
@@ -465,28 +465,26 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
-      'taegetMusncle': serializer.toJson<String?>(taegetMusncle),
+      'targetMuscle': serializer.toJson<String?>(targetMuscle),
     };
   }
 
   Exercise copyWith({
     String? id,
     String? name,
-    Value<String?> taegetMusncle = const Value.absent(),
+    Value<String?> targetMuscle = const Value.absent(),
   }) => Exercise(
     id: id ?? this.id,
     name: name ?? this.name,
-    taegetMusncle: taegetMusncle.present
-        ? taegetMusncle.value
-        : this.taegetMusncle,
+    targetMuscle: targetMuscle.present ? targetMuscle.value : this.targetMuscle,
   );
   Exercise copyWithCompanion(ExercisesCompanion data) {
     return Exercise(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
-      taegetMusncle: data.taegetMusncle.present
-          ? data.taegetMusncle.value
-          : this.taegetMusncle,
+      targetMuscle: data.targetMuscle.present
+          ? data.targetMuscle.value
+          : this.targetMuscle,
     );
   }
 
@@ -495,50 +493,50 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     return (StringBuffer('Exercise(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('taegetMusncle: $taegetMusncle')
+          ..write('targetMuscle: $targetMuscle')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, taegetMusncle);
+  int get hashCode => Object.hash(id, name, targetMuscle);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Exercise &&
           other.id == this.id &&
           other.name == this.name &&
-          other.taegetMusncle == this.taegetMusncle);
+          other.targetMuscle == this.targetMuscle);
 }
 
 class ExercisesCompanion extends UpdateCompanion<Exercise> {
   final Value<String> id;
   final Value<String> name;
-  final Value<String?> taegetMusncle;
+  final Value<String?> targetMuscle;
   final Value<int> rowid;
   const ExercisesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.taegetMusncle = const Value.absent(),
+    this.targetMuscle = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ExercisesCompanion.insert({
     required String id,
     required String name,
-    this.taegetMusncle = const Value.absent(),
+    this.targetMuscle = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name);
   static Insertable<Exercise> custom({
     Expression<String>? id,
     Expression<String>? name,
-    Expression<String>? taegetMusncle,
+    Expression<String>? targetMuscle,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (taegetMusncle != null) 'taeget_musncle': taegetMusncle,
+      if (targetMuscle != null) 'target_muscle': targetMuscle,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -546,13 +544,13 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   ExercisesCompanion copyWith({
     Value<String>? id,
     Value<String>? name,
-    Value<String?>? taegetMusncle,
+    Value<String?>? targetMuscle,
     Value<int>? rowid,
   }) {
     return ExercisesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      taegetMusncle: taegetMusncle ?? this.taegetMusncle,
+      targetMuscle: targetMuscle ?? this.targetMuscle,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -566,8 +564,8 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (taegetMusncle.present) {
-      map['taeget_musncle'] = Variable<String>(taegetMusncle.value);
+    if (targetMuscle.present) {
+      map['target_muscle'] = Variable<String>(targetMuscle.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -580,7 +578,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     return (StringBuffer('ExercisesCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('taegetMusncle: $taegetMusncle, ')
+          ..write('targetMuscle: $targetMuscle, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1363,14 +1361,14 @@ typedef $$ExercisesTableCreateCompanionBuilder =
     ExercisesCompanion Function({
       required String id,
       required String name,
-      Value<String?> taegetMusncle,
+      Value<String?> targetMuscle,
       Value<int> rowid,
     });
 typedef $$ExercisesTableUpdateCompanionBuilder =
     ExercisesCompanion Function({
       Value<String> id,
       Value<String> name,
-      Value<String?> taegetMusncle,
+      Value<String?> targetMuscle,
       Value<int> rowid,
     });
 
@@ -1416,8 +1414,8 @@ class $$ExercisesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get taegetMusncle => $composableBuilder(
-    column: $table.taegetMusncle,
+  ColumnFilters<String> get targetMuscle => $composableBuilder(
+    column: $table.targetMuscle,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1466,8 +1464,8 @@ class $$ExercisesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get taegetMusncle => $composableBuilder(
-    column: $table.taegetMusncle,
+  ColumnOrderings<String> get targetMuscle => $composableBuilder(
+    column: $table.targetMuscle,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -1487,8 +1485,8 @@ class $$ExercisesTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<String> get taegetMusncle => $composableBuilder(
-    column: $table.taegetMusncle,
+  GeneratedColumn<String> get targetMuscle => $composableBuilder(
+    column: $table.targetMuscle,
     builder: (column) => column,
   );
 
@@ -1548,24 +1546,24 @@ class $$ExercisesTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                Value<String?> taegetMusncle = const Value.absent(),
+                Value<String?> targetMuscle = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExercisesCompanion(
                 id: id,
                 name: name,
-                taegetMusncle: taegetMusncle,
+                targetMuscle: targetMuscle,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
                 required String id,
                 required String name,
-                Value<String?> taegetMusncle = const Value.absent(),
+                Value<String?> targetMuscle = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExercisesCompanion.insert(
                 id: id,
                 name: name,
-                taegetMusncle: taegetMusncle,
+                targetMuscle: targetMuscle,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
