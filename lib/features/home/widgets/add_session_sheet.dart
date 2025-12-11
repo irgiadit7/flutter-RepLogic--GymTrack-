@@ -18,48 +18,55 @@ class _AddSessionSheetState extends ConsumerState<AddSessionSheet> {
     super.dispose();
   }
 
-  void _submit() {
+  void _submit() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
 
-    final repository = ref.read(workoutRepositoryProvider);
+    await ref.read(workoutRepositoryProvider).createSession(name);
 
-    repository.addSession(name, DateTime.now());
-
-    Navigator.of(context).pop();
+    if (mounted) {
+      Navigator.pop(context); 
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
+      padding: EdgeInsets.only(
+        left: 16, 
+        right: 16, 
+        top: 16, 
+        bottom: bottomInset + 16
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            "start a new workout",
-            style: Theme.of(context).textTheme.headlineSmall,
+            "New Workout Log", 
+            style: Theme.of(context).textTheme.titleLarge
           ),
-
-          const SizedBox(height: 15),
+          const SizedBox(height: 16),
           TextField(
             controller: _nameController,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: "Session Name (Example: Push Day)",
+              hintText: 'e.g., Push Day, Leg Day',
               border: OutlineInputBorder(),
+              labelText: 'Session Name',
             ),
+            onSubmitted: (_) => _submit(),
           ),
-
-          const SizedBox(height: 20),
-
-          FilledButton.icon(
+          const SizedBox(height: 16),
+          ElevatedButton(
             onPressed: _submit,
-            label: const Text("start training!"),
-            icon: const Icon(Icons.save),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blueAccent,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text("Create Session"),
           ),
         ],
       ),

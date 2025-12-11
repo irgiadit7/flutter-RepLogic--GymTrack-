@@ -11,6 +11,7 @@ class WorkoutSessions extends Table {
   TextColumn get name => text().withLength(min: 1, max: 50)();
   DateTimeColumn get date => dateTime()();
   IntColumn get durationSeconds => integer().nullable()();
+  TextColumn get note => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -18,8 +19,9 @@ class WorkoutSessions extends Table {
 
 class Exercises extends Table {
   TextColumn get id => text()();
-  TextColumn get name => text()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get targetMuscle => text().nullable()();
+  TextColumn get category => text().withDefault(const Constant('barbel'))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -27,14 +29,13 @@ class Exercises extends Table {
 
 class WorkoutSets extends Table {
   TextColumn get id => text()();
-  TextColumn get sessionId => text().references(WorkoutSessions, #id)();
-  TextColumn get exerciesId => text().references(Exercises, #id)();
-
+  TextColumn get sessionId =>
+      text().references(WorkoutSessions, #id, onDelete: KeyAction.cascade)();
+  TextColumn get exerciseId => text().references(Exercises, #id)();
   RealColumn get weight => real()();
   IntColumn get reps => integer()();
   RealColumn get rpe => real().nullable()();
-  BoolColumn get isFailure => boolean().withDefault(const Constant(false))();
-
+  IntColumn get setType => integer().withDefault(const Constant(0))();
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -44,23 +45,26 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+    onCreate: (m) async {
+      await m.createAll();
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) ;
+    },
+  );
 }
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'replogic.sqlite'));
+    final file = File(p.join(dbFolder.path, 'replogic_v2.sqlite'));
     return NativeDatabase.createInBackground(file);
   });
-}
-
-class Exercies extends Table {
-  TextColumn get id => text()();
-  TextColumn get name => text()();
-
-  TextColumn get targetMuscle => text().nullable()();
-
-  @override
-  Set<Column> get primaryKey => {id};
 }
