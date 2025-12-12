@@ -28,9 +28,23 @@ class _RepLogicAppState extends ConsumerState<RepLogicApp> {
       title: "Rep Logic",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF00FF00),
+          secondary: Color(0xFF00FF00),
+          surface: Colors.black,
+        ),
         useMaterial3: true,
         fontFamily: "Roboto",
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: Color(0xFF1E1E1E),
+        ),
       ),
 
       home: const HomeScreen(),

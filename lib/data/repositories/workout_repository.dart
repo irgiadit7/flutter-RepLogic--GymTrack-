@@ -157,6 +157,43 @@ class WorkoutRepository {
     }
     debugPrint("✅ Database Seeded with Default Exercises!");
   }
+
+  Future<void> updateSet({
+    required String setId,
+    required double weight,
+    required int reps,
+    required double rpe,
+  }) async {
+    await (_db.update(_db.workoutSets)..where((t) => t.id.equals(setId))).write(
+      WorkoutSetsCompanion(
+        weight: Value(weight),
+        reps: Value(reps),
+        rpe: Value(rpe),
+      ),
+    );
+  }
+
+  Future<WorkoutSet?> getLastSetForExercise(String exerciseId) async {
+    final query =
+        _db.select(_db.workoutSets).join([
+            innerJoin(
+              _db.workoutSessions,
+              _db.workoutSessions.id.equalsExp(_db.workoutSets.sessionId),
+            ),
+          ])
+          ..where(_db.workoutSets.exerciseId.equals(exerciseId))
+          ..orderBy([
+            OrderingTerm(
+              expression: _db.workoutSessions.date,
+              mode: OrderingMode.desc,
+            ),
+          ])
+          ..limit(1);
+
+    final result = await query.getSingleOrNull();
+
+    return result?.readTable(_db.workoutSets);
+  }
 }
 
 class SetWithExercise {

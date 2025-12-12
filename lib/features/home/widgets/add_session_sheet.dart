@@ -25,7 +25,7 @@ class _AddSessionSheetState extends ConsumerState<AddSessionSheet> {
     await ref.read(workoutRepositoryProvider).createSession(name);
 
     if (mounted) {
-      Navigator.pop(context); 
+      Navigator.pop(context);
     }
   }
 
@@ -35,18 +35,18 @@ class _AddSessionSheetState extends ConsumerState<AddSessionSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 16, 
-        right: 16, 
-        top: 16, 
-        bottom: bottomInset + 16
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: bottomInset + 16,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            "New Workout Log", 
-            style: Theme.of(context).textTheme.titleLarge
+            "New Workout Log",
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
           TextField(
