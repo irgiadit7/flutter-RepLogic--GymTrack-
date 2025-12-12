@@ -23,7 +23,6 @@ class SessionDetailScreen extends ConsumerWidget {
     final setsAsync = ref.watch(sessionSetsProvider(session.id));
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,21 +296,25 @@ class SessionDetailScreen extends ConsumerWidget {
       ),
       builder: (context) => ExerciseSelectorSheet(
         onSelected: (exercise) async {
-          final lastSet = await ref
-              .read(workoutRepositoryProvider)
-              .getLastSetForExercise(exercise.id);
-          final defaultWeight = lastSet?.weight ?? 20.0;
-          final defaultReps = lastSet?.reps ?? 10;
-          ref
-              .read(workoutRepositoryProvider)
-              .addSet(
-                sessionId: session.id,
-                exerciseId: exercise.id,
-                weight: defaultWeight,
-                reps: defaultReps,
-                rpe: 0,
-                setType: 0,
-              );
+          try {
+            final lastSet = await ref
+                .read(workoutRepositoryProvider)
+                .getLastSetForExercise(exercise.id);
+            final defaultWeight = lastSet?.weight ?? 20.0;
+            final defaultReps = lastSet?.reps ?? 10;
+            ref
+                .read(workoutRepositoryProvider)
+                .addSet(
+                  sessionId: session.id,
+                  exerciseId: exercise.id,
+                  weight: defaultWeight,
+                  reps: defaultReps,
+                  rpe: 0,
+                  setType: 0,
+                );
+          } catch (e) {
+            debugPrint("ERROR ADD SET: $e");
+          }
         },
       ),
     );

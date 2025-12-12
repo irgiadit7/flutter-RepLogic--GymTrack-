@@ -104,49 +104,60 @@ class WorkoutRepository {
 
   Future<void> seedDefaultExercises() async {
     final allExercises = await _db.select(_db.exercises).get();
-
     if (allExercises.isNotEmpty) return;
 
     final defaults = [
       const ExercisesCompanion(
         name: Value('Bench Press (Barbell)'),
-        targetMuscle: Value('Chest'),
+        targetMuscle: Value('Middle Chest'),
+        bodyPart: Value('Chest'),
         category: Value('barbell'),
+        youtubeUrl: Value('https://www.youtube.com/watch?v=rT7DgCr-3pg'),
+        instructions: Value(
+          'Lie on the bench, lower the bar to your chest, and push up.',
+        ),
+        isCustom: Value(false),
       ),
       const ExercisesCompanion(
-        name: Value('Incline Bench Press'),
-        targetMuscle: Value('Chest'),
+        name: Value('Incline Bench Press (Dumbbell)'),
+        targetMuscle: Value('Upper Chest'),
+        bodyPart: Value('Chest'),
         category: Value('dumbbell'),
+        isCustom: Value(false),
       ),
+
+      // LEGS
       const ExercisesCompanion(
         name: Value('Squat (Barbell)'),
-        targetMuscle: Value('Legs'),
+        targetMuscle: Value('Quadriceps'),
+        bodyPart: Value('Legs'),
         category: Value('barbell'),
+        youtubeUrl: Value('https://www.youtube.com/watch?v=ultWZbGWL5c'),
+        isCustom: Value(false),
       ),
+
+      // BACK
       const ExercisesCompanion(
         name: Value('Deadlift'),
-        targetMuscle: Value('Back'),
+        targetMuscle: Value('Lower Back'),
+        bodyPart: Value('Back'),
         category: Value('barbell'),
+        isCustom: Value(false),
       ),
       const ExercisesCompanion(
         name: Value('Lat Pulldown'),
-        targetMuscle: Value('Back'),
+        targetMuscle: Value('Lats'),
+        bodyPart: Value('Back'),
         category: Value('machine'),
+        isCustom: Value(false),
       ),
+
       const ExercisesCompanion(
-        name: Value('Shoulder Press'),
-        targetMuscle: Value('Shoulders'),
+        name: Value('Bicep Curl (Dumbbell)'),
+        targetMuscle: Value('Biceps'),
+        bodyPart: Value('Arms'),
         category: Value('dumbbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Bicep Curl'),
-        targetMuscle: Value('Arms'),
-        category: Value('dumbbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Tricep Pushdown'),
-        targetMuscle: Value('Arms'),
-        category: Value('machine'),
+        isCustom: Value(false),
       ),
     ];
 
@@ -155,7 +166,7 @@ class WorkoutRepository {
           .into(_db.exercises)
           .insert(ex.copyWith(id: Value(const Uuid().v4())));
     }
-    debugPrint("✅ Database Seeded with Default Exercises!");
+    debugPrint("✅ Database Seeded with Rich Data (v3)!");
   }
 
   Future<void> updateSet({
