@@ -3,16 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../../data/local/database.dart';
 
-class ExerciseDetailModal extends StatefulWidget {
+class ExerciseDetailScreen extends StatefulWidget {
   final Exercise exercise;
 
-  const ExerciseDetailModal({super.key, required this.exercise});
+  const ExerciseDetailScreen({super.key, required this.exercise});
 
   @override
-  State<ExerciseDetailModal> createState() => _ExerciseDetailModalState();
+  State<ExerciseDetailScreen> createState() => _ExerciseDetailScreenState();
 }
 
-class _ExerciseDetailModalState extends State<ExerciseDetailModal> {
+class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   YoutubePlayerController? _controller;
 
   @override
@@ -27,7 +27,8 @@ class _ExerciseDetailModalState extends State<ExerciseDetailModal> {
             autoPlay: false,
             mute: false,
             controlsVisibleAtStart: true,
-            
+            disableDragSeek: false,
+            forceHD: false,
           ),
         );
       }
@@ -43,55 +44,42 @@ class _ExerciseDetailModalState extends State<ExerciseDetailModal> {
 
   @override
   Widget build(BuildContext context) {
-    if (_controller == null) {
-      return _buildContent(isFullScreen: false);
-    }
-
-    return YoutubePlayerBuilder(
-      onExitFullScreen: () {
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      },
-      player: YoutubePlayer(
-        controller: _controller!,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: const Color(0xFF00FF00),
-        topActions: [
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              widget.exercise.name,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-              overflow: TextOverflow.ellipsis,
-            ),
+    return Scaffold(
+      backgroundColor:
+          Colors.black, 
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        centerTitle: true, 
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context), 
+        ),
+        title: Text(
+          widget.exercise.name, 
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
+        ),
+      ),
+      body: Column(
+        children: [
+          if (_controller != null)
+            YoutubePlayer(
+              controller: _controller!,
+              showVideoProgressIndicator: true,
+              progressIndicatorColor: const Color(0xFF00FF00),
+            )
+          else
+            const SizedBox.shrink(),
+
+          Expanded(child: _buildContent()),
         ],
       ),
-      builder: (context, player) {
-        return Column(
-          children: [
-            // Handle Bar
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[700],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            // Player Video
-            player,
-            // Sisa Konten (Deskripsi dll)
-            Expanded(child: _buildContent(isFullScreen: false)),
-          ],
-        );
-      },
     );
   }
 
-  Widget _buildContent({required bool isFullScreen}) {
+  Widget _buildContent() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -103,15 +91,6 @@ class _ExerciseDetailModalState extends State<ExerciseDetailModal> {
             ),
             const SizedBox(height: 20),
           ],
-
-          Text(
-            widget.exercise.name,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 16),
 
           Wrap(
             spacing: 8,

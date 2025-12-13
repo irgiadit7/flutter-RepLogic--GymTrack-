@@ -228,14 +228,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                               );
                         },
                       ),
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) =>
-                              ExerciseDetailModal(exercise: exercise),
-                        );
+                 onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ExerciseDetailScreen(exercise: exercise),
+                          ));
                       },
                     );
                   },
