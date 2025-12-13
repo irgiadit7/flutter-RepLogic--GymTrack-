@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/rendering.dart';
 import 'package:uuid/uuid.dart';
 import '../local/database.dart';
+import '../seeds/initial_data.dart';
 
 class WorkoutRepository {
   final AppDatabase _db;
@@ -106,67 +107,23 @@ class WorkoutRepository {
     final allExercises = await _db.select(_db.exercises).get();
     if (allExercises.isNotEmpty) return;
 
-    final defaults = [
-      const ExercisesCompanion(
-        name: Value('Bench Press (Barbell)'),
-        targetMuscle: Value('Middle Chest'),
-        bodyPart: Value('Chest'),
-        category: Value('barbell'),
-        youtubeUrl: Value('https://www.youtube.com/watch?v=rT7DgCr-3pg'),
-        instructions: Value(
-          'Lie on the bench, lower the bar to your chest, and push up.',
-        ),
-        isCustom: Value(false),
-      ),
-      const ExercisesCompanion(
-        name: Value('Incline Bench Press (Dumbbell)'),
-        targetMuscle: Value('Upper Chest'),
-        bodyPart: Value('Chest'),
-        category: Value('dumbbell'),
-        isCustom: Value(false),
-      ),
-
-      // LEGS
-      const ExercisesCompanion(
-        name: Value('Squat (Barbell)'),
-        targetMuscle: Value('Quadriceps'),
-        bodyPart: Value('Legs'),
-        category: Value('barbell'),
-        youtubeUrl: Value('https://www.youtube.com/watch?v=ultWZbGWL5c'),
-        isCustom: Value(false),
-      ),
-
-      // BACK
-      const ExercisesCompanion(
-        name: Value('Deadlift'),
-        targetMuscle: Value('Lower Back'),
-        bodyPart: Value('Back'),
-        category: Value('barbell'),
-        isCustom: Value(false),
-      ),
-      const ExercisesCompanion(
-        name: Value('Lat Pulldown'),
-        targetMuscle: Value('Lats'),
-        bodyPart: Value('Back'),
-        category: Value('machine'),
-        isCustom: Value(false),
-      ),
-
-      const ExercisesCompanion(
-        name: Value('Bicep Curl (Dumbbell)'),
-        targetMuscle: Value('Biceps'),
-        bodyPart: Value('Arms'),
-        category: Value('dumbbell'),
-        isCustom: Value(false),
-      ),
-    ];
-
-    for (final ex in defaults) {
+    for (final seed in masterExercises) {
       await _db
           .into(_db.exercises)
-          .insert(ex.copyWith(id: Value(const Uuid().v4())));
+          .insert(
+            ExercisesCompanion(
+              id: Value(const Uuid().v4()),
+              name: Value(seed.name),
+              targetMuscle: Value(seed.targetMuscle),
+              bodyPart: Value(seed.bodyPart),
+              category: Value(seed.category),
+              instructions: Value(seed.instructions),
+              youtubeUrl: Value(seed.youtubeUrl),
+              isCustom: const Value(false),
+            ),
+          );
     }
-    debugPrint("✅ Database Seeded with Rich Data (v3)!");
+    debugPrint("✅ Database Seeded with ${masterExercises.length} Exercises!");
   }
 
   Future<void> updateSet({
@@ -204,6 +161,14 @@ class WorkoutRepository {
     final result = await query.getSingleOrNull();
 
     return result?.readTable(_db.workoutSets);
+  }
+
+  Future<void> toggleExerciseFavorite(
+    String exerciseId,
+    bool currentStatus,
+  ) async {
+    await (_db.update(_db.exercises)..where((tbl) => tbl.id.equals(exerciseId)))
+        .write(ExercisesCompanion(isFavorite: Value(!currentStatus)));
   }
 }
 

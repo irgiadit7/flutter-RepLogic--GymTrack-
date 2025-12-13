@@ -56,8 +56,9 @@ class ExerciseSelectorSheet extends ConsumerWidget {
             child: StreamBuilder<List<Exercise>>(
               stream: exerciseAsync,
               builder: (context, snapshot) {
-                if (!snapshot.hasData)
+                if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
+                }
 
                 final exercises = snapshot.data!;
 

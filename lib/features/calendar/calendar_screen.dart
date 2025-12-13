@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rep_logic/features/home/widgets/add_session_sheet.dart';
 import 'package:rep_logic/features/session_detail/session_detail_screen.dart';
 import '../../data/providers.dart';
 import '../../data/local/database.dart';

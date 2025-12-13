@@ -423,8 +423,7 @@ class $ExercisesTable extends Exercises
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('barbel'),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _instructionsMeta = const VerificationMeta(
     'instructions',
@@ -463,6 +462,21 @@ class $ExercisesTable extends Exercises
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isFavoriteMeta = const VerificationMeta(
+    'isFavorite',
+  );
+  @override
+  late final GeneratedColumn<bool> isFavorite = GeneratedColumn<bool>(
+    'is_favorite',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_favorite" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -473,6 +487,7 @@ class $ExercisesTable extends Exercises
     instructions,
     youtubeUrl,
     isCustom,
+    isFavorite,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -519,6 +534,8 @@ class $ExercisesTable extends Exercises
         _categoryMeta,
         category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
       );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
     }
     if (data.containsKey('instructions')) {
       context.handle(
@@ -539,6 +556,12 @@ class $ExercisesTable extends Exercises
       context.handle(
         _isCustomMeta,
         isCustom.isAcceptableOrUnknown(data['is_custom']!, _isCustomMeta),
+      );
+    }
+    if (data.containsKey('is_favorite')) {
+      context.handle(
+        _isFavoriteMeta,
+        isFavorite.isAcceptableOrUnknown(data['is_favorite']!, _isFavoriteMeta),
       );
     }
     return context;
@@ -582,6 +605,10 @@ class $ExercisesTable extends Exercises
         DriftSqlType.bool,
         data['${effectivePrefix}is_custom'],
       )!,
+      isFavorite: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_favorite'],
+      )!,
     );
   }
 
@@ -600,6 +627,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
   final String? instructions;
   final String? youtubeUrl;
   final bool isCustom;
+  final bool isFavorite;
   const Exercise({
     required this.id,
     required this.name,
@@ -609,6 +637,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     this.instructions,
     this.youtubeUrl,
     required this.isCustom,
+    required this.isFavorite,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -629,6 +658,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
       map['youtube_url'] = Variable<String>(youtubeUrl);
     }
     map['is_custom'] = Variable<bool>(isCustom);
+    map['is_favorite'] = Variable<bool>(isFavorite);
     return map;
   }
 
@@ -650,6 +680,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
           ? const Value.absent()
           : Value(youtubeUrl),
       isCustom: Value(isCustom),
+      isFavorite: Value(isFavorite),
     );
   }
 
@@ -667,6 +698,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
       instructions: serializer.fromJson<String?>(json['instructions']),
       youtubeUrl: serializer.fromJson<String?>(json['youtubeUrl']),
       isCustom: serializer.fromJson<bool>(json['isCustom']),
+      isFavorite: serializer.fromJson<bool>(json['isFavorite']),
     );
   }
   @override
@@ -681,6 +713,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
       'instructions': serializer.toJson<String?>(instructions),
       'youtubeUrl': serializer.toJson<String?>(youtubeUrl),
       'isCustom': serializer.toJson<bool>(isCustom),
+      'isFavorite': serializer.toJson<bool>(isFavorite),
     };
   }
 
@@ -693,6 +726,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     Value<String?> instructions = const Value.absent(),
     Value<String?> youtubeUrl = const Value.absent(),
     bool? isCustom,
+    bool? isFavorite,
   }) => Exercise(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -702,6 +736,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     instructions: instructions.present ? instructions.value : this.instructions,
     youtubeUrl: youtubeUrl.present ? youtubeUrl.value : this.youtubeUrl,
     isCustom: isCustom ?? this.isCustom,
+    isFavorite: isFavorite ?? this.isFavorite,
   );
   Exercise copyWithCompanion(ExercisesCompanion data) {
     return Exercise(
@@ -719,6 +754,9 @@ class Exercise extends DataClass implements Insertable<Exercise> {
           ? data.youtubeUrl.value
           : this.youtubeUrl,
       isCustom: data.isCustom.present ? data.isCustom.value : this.isCustom,
+      isFavorite: data.isFavorite.present
+          ? data.isFavorite.value
+          : this.isFavorite,
     );
   }
 
@@ -732,7 +770,8 @@ class Exercise extends DataClass implements Insertable<Exercise> {
           ..write('category: $category, ')
           ..write('instructions: $instructions, ')
           ..write('youtubeUrl: $youtubeUrl, ')
-          ..write('isCustom: $isCustom')
+          ..write('isCustom: $isCustom, ')
+          ..write('isFavorite: $isFavorite')
           ..write(')'))
         .toString();
   }
@@ -747,6 +786,7 @@ class Exercise extends DataClass implements Insertable<Exercise> {
     instructions,
     youtubeUrl,
     isCustom,
+    isFavorite,
   );
   @override
   bool operator ==(Object other) =>
@@ -759,7 +799,8 @@ class Exercise extends DataClass implements Insertable<Exercise> {
           other.category == this.category &&
           other.instructions == this.instructions &&
           other.youtubeUrl == this.youtubeUrl &&
-          other.isCustom == this.isCustom);
+          other.isCustom == this.isCustom &&
+          other.isFavorite == this.isFavorite);
 }
 
 class ExercisesCompanion extends UpdateCompanion<Exercise> {
@@ -771,6 +812,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   final Value<String?> instructions;
   final Value<String?> youtubeUrl;
   final Value<bool> isCustom;
+  final Value<bool> isFavorite;
   final Value<int> rowid;
   const ExercisesCompanion({
     this.id = const Value.absent(),
@@ -781,6 +823,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     this.instructions = const Value.absent(),
     this.youtubeUrl = const Value.absent(),
     this.isCustom = const Value.absent(),
+    this.isFavorite = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ExercisesCompanion.insert({
@@ -788,13 +831,15 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     required String name,
     this.targetMuscle = const Value.absent(),
     this.bodyPart = const Value.absent(),
-    this.category = const Value.absent(),
+    required String category,
     this.instructions = const Value.absent(),
     this.youtubeUrl = const Value.absent(),
     this.isCustom = const Value.absent(),
+    this.isFavorite = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
-       name = Value(name);
+       name = Value(name),
+       category = Value(category);
   static Insertable<Exercise> custom({
     Expression<String>? id,
     Expression<String>? name,
@@ -804,6 +849,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     Expression<String>? instructions,
     Expression<String>? youtubeUrl,
     Expression<bool>? isCustom,
+    Expression<bool>? isFavorite,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -815,6 +861,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       if (instructions != null) 'instructions': instructions,
       if (youtubeUrl != null) 'youtube_url': youtubeUrl,
       if (isCustom != null) 'is_custom': isCustom,
+      if (isFavorite != null) 'is_favorite': isFavorite,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -828,6 +875,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     Value<String?>? instructions,
     Value<String?>? youtubeUrl,
     Value<bool>? isCustom,
+    Value<bool>? isFavorite,
     Value<int>? rowid,
   }) {
     return ExercisesCompanion(
@@ -839,6 +887,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       instructions: instructions ?? this.instructions,
       youtubeUrl: youtubeUrl ?? this.youtubeUrl,
       isCustom: isCustom ?? this.isCustom,
+      isFavorite: isFavorite ?? this.isFavorite,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -870,6 +919,9 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     if (isCustom.present) {
       map['is_custom'] = Variable<bool>(isCustom.value);
     }
+    if (isFavorite.present) {
+      map['is_favorite'] = Variable<bool>(isFavorite.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -887,6 +939,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
           ..write('instructions: $instructions, ')
           ..write('youtubeUrl: $youtubeUrl, ')
           ..write('isCustom: $isCustom, ')
+          ..write('isFavorite: $isFavorite, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1697,10 +1750,11 @@ typedef $$ExercisesTableCreateCompanionBuilder =
       required String name,
       Value<String?> targetMuscle,
       Value<String?> bodyPart,
-      Value<String> category,
+      required String category,
       Value<String?> instructions,
       Value<String?> youtubeUrl,
       Value<bool> isCustom,
+      Value<bool> isFavorite,
       Value<int> rowid,
     });
 typedef $$ExercisesTableUpdateCompanionBuilder =
@@ -1713,6 +1767,7 @@ typedef $$ExercisesTableUpdateCompanionBuilder =
       Value<String?> instructions,
       Value<String?> youtubeUrl,
       Value<bool> isCustom,
+      Value<bool> isFavorite,
       Value<int> rowid,
     });
 
@@ -1785,6 +1840,11 @@ class $$ExercisesTableFilterComposer
 
   ColumnFilters<bool> get isCustom => $composableBuilder(
     column: $table.isCustom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1862,6 +1922,11 @@ class $$ExercisesTableOrderingComposer
     column: $table.isCustom,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ExercisesTableAnnotationComposer
@@ -1902,6 +1967,11 @@ class $$ExercisesTableAnnotationComposer
 
   GeneratedColumn<bool> get isCustom =>
       $composableBuilder(column: $table.isCustom, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFavorite => $composableBuilder(
+    column: $table.isFavorite,
+    builder: (column) => column,
+  );
 
   Expression<T> workoutSetsRefs<T extends Object>(
     Expression<T> Function($$WorkoutSetsTableAnnotationComposer a) f,
@@ -1965,6 +2035,7 @@ class $$ExercisesTableTableManager
                 Value<String?> instructions = const Value.absent(),
                 Value<String?> youtubeUrl = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
+                Value<bool> isFavorite = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExercisesCompanion(
                 id: id,
@@ -1975,6 +2046,7 @@ class $$ExercisesTableTableManager
                 instructions: instructions,
                 youtubeUrl: youtubeUrl,
                 isCustom: isCustom,
+                isFavorite: isFavorite,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1983,10 +2055,11 @@ class $$ExercisesTableTableManager
                 required String name,
                 Value<String?> targetMuscle = const Value.absent(),
                 Value<String?> bodyPart = const Value.absent(),
-                Value<String> category = const Value.absent(),
+                required String category,
                 Value<String?> instructions = const Value.absent(),
                 Value<String?> youtubeUrl = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
+                Value<bool> isFavorite = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExercisesCompanion.insert(
                 id: id,
@@ -1997,6 +2070,7 @@ class $$ExercisesTableTableManager
                 instructions: instructions,
                 youtubeUrl: youtubeUrl,
                 isCustom: isCustom,
+                isFavorite: isFavorite,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
