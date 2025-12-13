@@ -56,28 +56,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     if (!mounted) return;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => ExerciseSelectorSheet(
-        onSelected: (exercise) async {
-          await repository.addSet(
-            sessionId: sessionId,
-            exerciseId: exercise.id,
-            weight: 0,
-            reps: 0,
-            rpe: 0,
-            setType: 0,
-          );
-
-          if (!context.mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => SessionDetailScreen(session: newSession),
-            ),
-          );
-        },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => SessionDetailScreen(session: newSession),
       ),
     );
   }
