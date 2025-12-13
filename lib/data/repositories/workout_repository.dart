@@ -16,7 +16,7 @@ class WorkoutRepository {
         .watch();
   }
 
-  Future<String> createSession(String name) async {
+  Future<String> createSession(String name, DateTime date) async {
     final id = const Uuid().v4();
     await _db
         .into(_db.workoutSessions)
@@ -24,7 +24,7 @@ class WorkoutRepository {
           WorkoutSessionsCompanion(
             id: Value(id),
             name: Value(name),
-            date: Value(DateTime.now()),
+            date: Value(date),
           ),
         );
     return id;

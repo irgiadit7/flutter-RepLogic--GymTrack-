@@ -55,7 +55,6 @@ class SessionDetailScreen extends ConsumerWidget {
           style: TextStyle(color: Colors.white),
         ),
         icon: const Icon(Icons.add, color: Colors.white),
-        backgroundColor: Colors.blue,
       ),
     );
   }
@@ -331,7 +330,7 @@ class SessionDetailScreen extends ConsumerWidget {
             "Start training!",
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          const Text("Press the + button to add movement"),
+          const Text("Press the + button to add Exercise"),
         ],
       ),
     );

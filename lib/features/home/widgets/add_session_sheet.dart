@@ -22,7 +22,9 @@ class _AddSessionSheetState extends ConsumerState<AddSessionSheet> {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
 
-    await ref.read(workoutRepositoryProvider).createSession(name);
+    await ref
+        .read(workoutRepositoryProvider)
+        .createSession(name, DateTime.now());
 
     if (mounted) {
       Navigator.pop(context);
