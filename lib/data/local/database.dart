@@ -21,7 +21,12 @@ class Exercises extends Table {
   TextColumn get id => text()();
   TextColumn get name => text().withLength(min: 1, max: 100)();
   TextColumn get targetMuscle => text().nullable()();
-  TextColumn get category => text().withDefault(const Constant('barbel'))();
+  TextColumn get bodyPart => text().nullable()();
+  TextColumn get category => text()();
+  TextColumn get instructions => text().nullable()();
+  TextColumn get youtubeUrl => text().nullable()();
+  BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
+  BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -45,7 +50,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -56,7 +61,10 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
     },
     onUpgrade: (m, from, to) async {
-      if (from < 2) ;
+      if (from < 3) {}
+      //WARN: RESET ALL DATA FROM STORE*
+      await m.drop(exercises);
+      await m.createTable(exercises);
     },
   );
 }

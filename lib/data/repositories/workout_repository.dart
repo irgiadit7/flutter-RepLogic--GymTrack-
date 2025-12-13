@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/rendering.dart';
 import 'package:uuid/uuid.dart';
 import '../local/database.dart';
+import '../seeds/initial_data.dart';
 
 class WorkoutRepository {
   final AppDatabase _db;
@@ -15,7 +16,7 @@ class WorkoutRepository {
         .watch();
   }
 
-  Future<String> createSession(String name) async {
+  Future<String> createSession(String name, DateTime date) async {
     final id = const Uuid().v4();
     await _db
         .into(_db.workoutSessions)
@@ -23,7 +24,7 @@ class WorkoutRepository {
           WorkoutSessionsCompanion(
             id: Value(id),
             name: Value(name),
-            date: Value(DateTime.now()),
+            date: Value(date),
           ),
         );
     return id;
@@ -104,58 +105,25 @@ class WorkoutRepository {
 
   Future<void> seedDefaultExercises() async {
     final allExercises = await _db.select(_db.exercises).get();
-
     if (allExercises.isNotEmpty) return;
 
-    final defaults = [
-      const ExercisesCompanion(
-        name: Value('Bench Press (Barbell)'),
-        targetMuscle: Value('Chest'),
-        category: Value('barbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Incline Bench Press'),
-        targetMuscle: Value('Chest'),
-        category: Value('dumbbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Squat (Barbell)'),
-        targetMuscle: Value('Legs'),
-        category: Value('barbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Deadlift'),
-        targetMuscle: Value('Back'),
-        category: Value('barbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Lat Pulldown'),
-        targetMuscle: Value('Back'),
-        category: Value('machine'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Shoulder Press'),
-        targetMuscle: Value('Shoulders'),
-        category: Value('dumbbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Bicep Curl'),
-        targetMuscle: Value('Arms'),
-        category: Value('dumbbell'),
-      ),
-      const ExercisesCompanion(
-        name: Value('Tricep Pushdown'),
-        targetMuscle: Value('Arms'),
-        category: Value('machine'),
-      ),
-    ];
-
-    for (final ex in defaults) {
+    for (final seed in masterExercises) {
       await _db
           .into(_db.exercises)
-          .insert(ex.copyWith(id: Value(const Uuid().v4())));
+          .insert(
+            ExercisesCompanion(
+              id: Value(const Uuid().v4()),
+              name: Value(seed.name),
+              targetMuscle: Value(seed.targetMuscle),
+              bodyPart: Value(seed.bodyPart),
+              category: Value(seed.category),
+              instructions: Value(seed.instructions),
+              youtubeUrl: Value(seed.youtubeUrl),
+              isCustom: const Value(false),
+            ),
+          );
     }
-    debugPrint("✅ Database Seeded with Default Exercises!");
+    debugPrint("✅ Database Seeded with ${masterExercises.length} Exercises!");
   }
 
   Future<void> updateSet({
@@ -193,6 +161,14 @@ class WorkoutRepository {
     final result = await query.getSingleOrNull();
 
     return result?.readTable(_db.workoutSets);
+  }
+
+  Future<void> toggleExerciseFavorite(
+    String exerciseId,
+    bool currentStatus,
+  ) async {
+    await (_db.update(_db.exercises)..where((tbl) => tbl.id.equals(exerciseId)))
+        .write(ExercisesCompanion(isFavorite: Value(!currentStatus)));
   }
 }
 
