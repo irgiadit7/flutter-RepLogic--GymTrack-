@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import '../../data/providers.dart';
 import '../../data/local/database.dart';
 import '../session_detail/session_detail_screen.dart';
-import '../session_detail/widgets/exercise_selector_sheet.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});

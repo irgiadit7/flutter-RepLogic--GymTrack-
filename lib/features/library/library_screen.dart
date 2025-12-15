@@ -135,8 +135,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             child: StreamBuilder<List<Exercise>>(
               stream: streamExercises,
               builder: (context, snapshot) {
-                if (!snapshot.hasData)
+                if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
+                }
 
                 var exercises = snapshot.data!;
 
